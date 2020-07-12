@@ -1,82 +1,62 @@
-DSAD Assignment 1
-Design Document for Assignment 1 – PS4 - [Student Record]
-Group ID: DSAD_GROUP140
+Design Document for Problem Statement 8 - Club House
 
-Note: Solution for this design is present in  A1_PS4_SR_DSAD_GROUP140.py
-
-
-==========================
+---------
 Overview:
-==========================
-A data structure (Hash Table) of Student Records (key as Student ID containing the department name and the corresponding CGPA value) is to be built that supports the following functions:
-	1.	init: Initialization of the data structure
-	2.	insert: Inserts a new record into the data structure (table)
-	3.	hallOfFame: Finds all records that have values above a certain threshold
-	4.	newCourseList: Finds all the records that have values in a given range
-	5.	depAvg: Finds the max and average value for each department
-	6.	destroy: To perform cleanup by eliminating all records from the data structure
+---------
+The solution uses a HashTable data structure (key as Applicant's name) and the following functions needs to be implemented using the HashTable.
+	1.	initializeHash: Initialize an empty hash table
+	2.	insertAppDetails: Inserts applicant records into the hash table
+	3.	updateAppDetails: finds the applicant’s details based on the name and updates the corresponding details into the hash table.
+	4.	memRef: Prints the list of all members who have been referred by a particular member
+	5.	appStatus: Prints the list of number of applications in each stage of the application process
+	6.	destroyHash: Destroys all the entries inside hash table.
 
+-----------------
+Problem Analysis:
+-----------------
+	1.	Assume number of members are 'n' as it is not fixed.
+	2.  Insert and Update entail updating the data structure(HashTable).
+	3.	For memRef and appStatus, we chose to do a complete scan of the entire data structure. This could have been further optimised using a seperate hash table.
+	
+---------------
+Interpretation:
+---------------
+	1.	An unfixed number of values (n) have to be inserted.
+	2.	Optimize Hash fuction to improve performance.
+	3.	No given constraints on storage (space complexity).
 
-======================================
-Problem Analysis and Interpretation:
-======================================
-	1.	The time range is given from year 2008 to 2018 (10 years), this means 10 batches. It’s also given that 4 courses are active each year. Assuming a fixed intake of students happens (x), an upper limit on the number of records will be 10*4*x => 40x. With an assumed value of x = 20, there will be about 1000 records.
-	2.	From the functionality requirement stated in the overview above, methods 3, 4, 5 require a complete scan of the entire data structure (all records), since, all records are to be compared with the given input values to find out the qualified records and max/ average values.
-From the above problem analysis it’s clear that,
-	1.	An unfixed number of values (n) have to be inserted. Where n can be large depending on the value of x.
-	2.	Irrespective of the value of n, all values need to be traversed again and again.
-	3.	No given constraints on storage (space complexity)
+------------------------
+Choice of Hash Function:
+------------------------
+	We chose the following hash function,
+	
+	h(n) = s[0]*31^(n - 1) + s[1]*31^(n - 2) + ... + s[n - 1]
+	
+	Since the key is always a string(member name), the above hash function provides a unique value for permutations of the same string.
+	For example, 
+		h('SPOT') != h('TOPS')
+	
+	Note: Java string class uses the same hash function.
+	
+--------------------
+Handling collisions:
+--------------------
+Separate Chaining (using linked lists) is used to handle collisions.
+	Let 'N' be the size of the hash table
+	Load Factor of the hash table = n/N
+	To keep the collision count low, we chose load factor = 0.5
+	load_factor = 0.5 ==> N = 2*n
+	
+Note: Rehashing is not being done because the number of members in the input file is fixed.
+	
+This gives the following advantages,
+	1.	Simpler implementation for this use case.
+	2.	Gives scope for further optimizations by using other data structures (like BST) in place of linked lists(Buckets). 
 
-Considerations for handling collisions and selecting hash function:
-Thus, Separate Chaining (using linked lists) is used to resolve hash collisions as the load factor may be greater than 1. This gives the following advantages,
-	1.	Simpler implementation for this use case without constant rehashing and resizing.
-	2.	Insertion optimization is preferred over search optimization due to point 2 above.
-	3.	Gives scope for further optimizations by using other structures (BST) in place of linked lists. Additional caching mechanisms can be implemented.
-
-==========================
-Time Complexity:
-==========================
+------------------
+Run Time Analysis:
+------------------
 	1.	A single lookup will take O(k), where k is proportional to linked list size of that hash slot.
-	2.	Insertion with take O(1).
-
-
-
-
-Generate necessary hash table definitions needed and provide a design document
-(1 page) detailing clearly the design and the details of considerations while making this design
-and the reasons for the specific choice of hash function.
-
-The solution uses a HashTable data structure to achieve linear time lookup of members for update.
-HashTable class has 2 states, length & array. The getItem and setItem methods are overridden to mimic like a hash table.
-See necessary definitions below -:
-
-ClubhouseProcessor.py
-    Classes
-        HasTable
-            States
-                length
-                array
-            Behaviours
-                __init__(self)
-                HashId(self, key)
-                __setitem__(self, key, val)
-                __getitem__(self, key)
-                __delitem__(self, key)
-
-     Behaviours
-        insertAppDetails(ApplicationRecords, name, phone, memRef, status) -
-            inserts member details to hashTable
-
-        updateAppDetails(ApplicationRecords, name, phone, memRef, status) -
-        memberRef(ApplicationRecords, memID)
-        appStatus(ApplicationRecords)
-        destroyHash(ApplicationRecords)
-        processInputAndPrompt - bootstrap method, that processes input and prompt files
-
-Hash Function
-
-The hash function we used is -:
-
-h(n) = s[0]*31^(n - 1) + s[1]*31^(n - 2) + ... + s[n - 1]
-
+	2.	The worst case time complexity for Insert and Update is O(n).
+	3.  For memRef and appStatus, we need to traverse every entry in the HashTable. Considering 'k' as bucket size and 'N' as hash table size, the run time complexity is O(N*k).
 
