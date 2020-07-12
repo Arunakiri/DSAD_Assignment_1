@@ -1,5 +1,5 @@
 Successfully inserted 5 applications into the system.
-Updating details of Deepak Prasad.Status has been changed.
+Updated details of Deepak Prasad. Application Status has been changed.
 ---------- Member reference by 11129 ----------
 Sandhya Raman / 9213231311 / Verified
 Vinay Shah / 9912356788 / Approved
